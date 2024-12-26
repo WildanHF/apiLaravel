@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
 
@@ -42,6 +43,40 @@ class UserController extends Controller
                 'status' => true,
                 'message' => 'Pengguna baru berhasil ditambahkan'
             ],201);
+        }
+    }
+    public function login(Request $request){
+        $validator = Validator::make($request->all(), [
+            'username' => ['required','email'],
+            'password' => ['required']
+        ], [
+            'username.required' => 'username harus diisi',
+            'username.email' => 'username harus sesuai format email',
+            'password.required' => 'password harus diisi'
+        ]);
+
+        if ($validator->fails()){
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()
+            ], 400);
+        }else{
+
+            if(Auth::attempt(['email' => $request->username, 'password' => $request->password])) {
+                $user = Auth::user();
+                $token = $user->createToken('authToken')->plainTextToken;   
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Login Berhasil',
+                    'token' => $token,
+                ], 200);
+            }else{
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Login Gagal'
+                ], 400);
+            }
         }
     }
 }
