@@ -15,7 +15,15 @@ class UserController extends Controller
             'email' => ['required','email','unique:users','max:255'],
             'password' => ['required', 'max:255','confirmed']
         ],[
-           
+            'name.required' => 'Nama harus diisi',
+            'name.max' => 'Panjang karakter max 255',
+            'email.required' => 'Email harus diisi',
+            'email.email' => 'Format email tidak valid',
+            'email.unique' => 'Email sudah terdaftar',
+            'email.max' => 'Panjang email max 255',
+            'password.required' => 'Password harus diisi',
+            'password.max' => 'Panjang password max 255',
+            'password.confirmed' => 'password tidak sama'
         ]);
 
         if ($validator->fails()){
